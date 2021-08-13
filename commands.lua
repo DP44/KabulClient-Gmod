@@ -129,20 +129,20 @@ end)
 
 concommand.Add('kh_misc_bunnyhop', function()
 	pCache.Misc.BunnyHop = not pCache.Misc.BunnyHop
-	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.BunnyHop = ', pCache.Visuals.BunnyHop, '\n')
+	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.BunnyHop = ', pCache.Misc.BunnyHop, '\n')
 end)
 
 concommand.Add('kh_misc_ropespam', function()
 	pCache.Misc.RopeSpam = not pCache.Misc.RopeSpam
-	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.RopeSpam = ', pCache.Visuals.RopeSpam, '\n')
+	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.RopeSpam = ', pCache.Misc.RopeSpam, '\n')
 end)
 
 concommand.Add('kh_misc_cameraspam', function()
 	pCache.Misc.CameraSpam = not pCache.Misc.CameraSpam
-	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.CameraSpam = ', pCache.Visuals.CameraSpam, '\n')
+	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.CameraSpam = ', pCache.Misc.CameraSpam, '\n')
 end)
 
 concommand.Add('kh_misc_hitmarker', function()
 	pCache.Misc.Hitmarker = not pCache.Misc.Hitmarker
-	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.Hitmarker = ', pCache.Visuals.Hitmarker, '\n')
+	MsgC(pS.g_pDefaultColor, '[KuteHook]', color_white, ' pCache.Misc.Hitmarker = ', pCache.Misc.Hitmarker, '\n')
 end)
