@@ -35,6 +35,7 @@ local tblFiles = {
 	'features/visuals.lua',
 	'features/misc.lua',
 	'hooks.lua',
+	'commands.lua'
 }
 
 -- Include all of our files in order.

@@ -56,6 +56,26 @@ hook.Add('player_spawn', 'pPlayerSpawn', function(pData) -- Called when the play
 	end
 end)
 
+hook.Add('DrawPhysgunBeam', 'pDrawPhysgunBeam', function(pPlayer, pWeapon, bEnabled, pTarget, numBoneIndex, vecDeltaPos)
+	pS.pMisc.bFiringPhysgun = bEnabled
+	
+	-- Are we using the physgun?
+	if not bEnabled then 
+		return false
+	end
+
+	if pPlayer ~= pS.g_pLocalPlayer then 
+		return false
+	end
+
+	if not pTarget:IsValid() then 
+		return false
+	end
+
+	-- Store the last entity our physgun interacted with.
+	pS.pMisc.pLastProp = pTarget
+end)
+
 --==================================================================================--
 
 -- This was never implemented :(
@@ -88,3 +108,15 @@ end)
 hook.Add('PreDrawOpaqueRenderables', 'pPreDrawOpaqueRenderables', function()
 	pS.pVisuals:DrawTrajectory()
 end)
+
+
+-- This is gross...
+hook.Add('PreRender', 'pPreRender', function() pS.pVisuals:RenderFullbright() end)
+hook.Add('RenderScene', 'pRenderScene', function() pS.pVisuals:RenderFullbright() end)
+hook.Add('PostDrawSkyBox', 'pPostDrawSkyBox', function() pS.pVisuals:RenderFullbright() end)
+
+hook.Add('PostRender', 'pPostRender', function() render.SetLightingMode(0) end)
+hook.Add('PreDrawHUD', 'pPreDrawHUD', function() render.SetLightingMode(0) end)
+hook.Add('PreDrawEffects', 'pPreDrawEffects', function() render.SetLightingMode(0) end)
+hook.Add('PostDrawViewmodel', 'pPostDrawViewmodel', function() render.SetLightingMode(0) end)
+hook.Add('PreDrawSkyBox', 'pPreDrawSkyBox', function() render.SetLightingMode(0) end)

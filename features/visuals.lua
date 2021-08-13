@@ -21,10 +21,10 @@ pS.pVisuals.DefenseProps = {
 pS.pVisuals.RT = GetRenderTarget('pRenderTarget' .. os.time(), ScrW(), ScrH())
 
 -- Chams materials.
-pS.pVisuals.ChamsMat = CreateMaterial('pChams' .. os.time(), 'VertexLitGeneric', {
-	['$basetexture'] = 'models/debug/debugwhite',
-	['$model'] = 1
-})
+pS.pVisuals.ChamsMat = CreateMaterial('pChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$model'] = 1 })
+pS.pVisuals.FakeChamsMat = CreateMaterial('pFakeChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$model'] = 1 })
+pS.pVisuals.PropChamsMat = CreateMaterial('pPropChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$nocull'] = 1, ['$model'] = 1 })
+pS.pVisuals.FakeAngleChamsMat = CreateMaterial('pFakeChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$model'] = 1 })
 
 function pS.pVisuals:GetEspBoxBounds(entEntity)
 	local tblBox = { x = math.huge, y = math.huge, w = math.huge * -1, h = math.huge * -1 }
@@ -62,13 +62,10 @@ end
 function pS.pVisuals:PlayerShouldDraw(plyPlayer)
 	if not plyPlayer:IsDormant() then
 		if plyPlayer ~= pS.g_pLocalPlayer and plyPlayer:Alive() then
-			-- Old code from the old libby's days :(
-			--[[
-				-- Check if the player is in build mode.
-				if pCache.Visuals.PVPModeOnly and plyPlayer:GetNWBool("BuildMode", false) then
-					return false
-				end
-			]]
+			-- Check if the player is in build mode.
+			if plyPlayer:GetNWBool("BuildMode", false) then
+				return false
+			end
 
 			return true
 		end
@@ -232,13 +229,26 @@ function pS.pVisuals:DrawEspPlayer(plyPlayer)
 
 	if pCache.Visuals.Name then
 		draw.SimpleText(plyPlayer:Nick(), 'pSilentFont', Box.x - 2, Box.y - 3, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+
+		if plyPlayer:GetNWBool("BuildMode", false) then
+			draw.SimpleText('BUILD MODE', 'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			nTextDrop = nTextDrop + 12
+		end
 	end
 
 	if pCache.Visuals.Tracers then
-		if vecHitboxPos and plyPlayer:Alive() then
+		if vecHitboxPos and plyPlayer:Alive() and not plyPlayer:GetNWBool("BuildMode", false) then
 			if (vecHitboxPos:ToScreen().visible and pSDK.IsVisible(pS.g_pLocalPlayer:GetShootPos(), vecHitboxPos, { plyPlayer, pS.g_pLocalPlayer })) then
 				surface.SetDrawColor(Col)
 				surface.DrawLine(ScrW() / 2, ScrH() / 2, vecHitboxPos:ToScreen().x, vecHitboxPos:ToScreen().y)
+			end
+		end
+	end
+
+	if pCache.Visuals.TestValue then
+		if vecHitboxPos and plyPlayer:Alive() then
+			if (vecHitboxPos:ToScreen().visible and pSDK.IsVisible(pS.g_pLocalPlayer:GetShootPos(), vecHitboxPos, { plyPlayer, pS.g_pLocalPlayer })) then
+				pSDK.DrawCrossAtPosition(vecHitboxPos:ToScreen().x, vecHitboxPos:ToScreen().y)
 			end
 		end
 	end
@@ -307,7 +317,7 @@ function pS.pVisuals:GetClosestPlayer(entProp, bFilterLocal)
 end
 
 function pS.pVisuals:RenderPropTracers()
-	if not pS.pMisc.pLastProp or pS.pMisc.pLastProp == nil then
+	if pS.pMisc.pLastProp == nil or pS.pMisc.pLastProp == NULL then
 		return
 	end
 
@@ -339,7 +349,7 @@ function pS.pVisuals:RenderPropTracers()
 			Width = flDist / 40
 		}
 
-		local Col = pS.pVisuals:GetPlayerEspColor(plyClosestPlayer);
+		local Col = pS.pVisuals:GetPlayerEspColor(plyClosestPlayer)
 
 		if not trLinePos.HitWorld or trLinePos.Fraction == 1 then
 			cam.Start3D()
@@ -380,7 +390,7 @@ function pS.pVisuals:DrawTrajectory()
 				-- Copy our destination vector to currentPoint.
 				-- I have no idea why I'm doing this because without it the entire points table generates the same value for every iteration.
 				vecDest:Add(vecVelocity * engine.TickInterval())
-				pSDK.VectorCopy(vecDest, currentPoint);
+				pSDK.VectorCopy(vecDest, currentPoint)
 
 				for j = 2, pCache.Visuals.TrajLength - 1 do
 					-- Calculate our trajectory.
@@ -507,14 +517,14 @@ function pS.pVisuals:RenderPropEsp()
 				tblProps[Int]:SetNoDraw(true)
 
 				render.SetColorModulation(Col.r / 255, Col.g / 255, Col.b / 255)
-				render.SetBlend(Col.a / 255)
+				render.SetBlend(90 / 255)
 
 				-- Draw a wireframe box.
 				render.DrawWireframeBox(tblProps[Int]:GetPos(), tblProps[Int]:GetAngles(), tblProps[Int]:OBBMins(), tblProps[Int]:OBBMaxs(), Col, false)
 
 				tblProps[Int]:DrawModel()
 
-				tblProps[Int]:SetNoDraw(false)
+				tblProps[Int]:SetNoDraw(true)
 			end
 		end
 
@@ -525,4 +535,9 @@ function pS.pVisuals:RenderPropEsp()
 		render.SetColorModulation(1, 1, 1)
 		render.SetBlend(1)
 	end
+end
+
+function pS.pVisuals:RenderFullbright()
+	-- This is a really shitty implementation...
+	render.SetLightingMode(pCache.Visuals.Fullbright and 1 or 0)
 end

@@ -20,7 +20,8 @@ pSDK.IsVisible = function(vecFrom, vecPosition, tblFilterEnts)
 	}).Fraction == 1
 end
 
---============================================================================--
+ --======================================================================--
+
 pSDK.HitboxBones = {
 	-- Regular bones --
 	['ValveBiped.Bip01_Head1'] = true,
@@ -88,4 +89,19 @@ pSDK.GetHitboxPosition = function(plyTarget)
 			plyTarget.m_bNoHitbox = true
 		end
 	end
+end
+
+pSDK.DrawCrossAtPosition = function(x, y)
+	surface.SetDrawColor(pS.g_pDefaultColor)
+
+	-- (ScrW() / 2) = x
+	-- (ScrH() / 2) = y
+
+	surface.DrawLine(x - pCache.Visuals.CrosshairLength, y, x + pCache.Visuals.CrosshairLength, y)
+	surface.DrawLine(x, y - pCache.Visuals.CrosshairLength, x, y + pCache.Visuals.CrosshairLength)
+end
+
+pSDK.DrawCircleAtPosition = function(x, y, radius)
+	local fRadius = math.tan(math.rad(radius) / 2) / math.tan(math.rad(radius) / 2) * ScrW()	
+	surface.DrawCircle(x, y, fRadius, pS.g_pDefaultColor.r, pS.g_pDefaultColor.g, pS.g_pDefaultColor.b, pS.g_pDefaultColor.a)
 end
