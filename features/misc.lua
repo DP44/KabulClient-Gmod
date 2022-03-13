@@ -149,7 +149,9 @@ function pS.pMisc:BunnyHop(pCmd)
 	elseif pCmd:KeyDown(IN_JUMP) and pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
 		-- Once we hit the ground we give ourselves a little boost. 
 		-- This allows us to go extremely fast on some servers.
-		pCmd:SetForwardMove(10000)
+		-- 
+		-- TODO: Add toggle for this.
+		pCmd:SetForwardMove(10000) 
 	end
 end
 
@@ -175,15 +177,14 @@ function pS.pMisc:RopeSpam(pCmd)
 	if pCache.Misc.RopeSpam and pS.g_pLocalPlayer:Alive() then
 		pS.g_pActiveWeapon = pS.g_pLocalPlayer:GetActiveWeapon();
 
-		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and 
-		   pS.g_pActiveWeapon:GetClass() == 'gmod_tool' and 
-		   pS.g_pActiveWeapon.current_mode == 'rope' and pCmd:KeyDown(IN_ATTACK) then
+		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and pS.g_pActiveWeapon:GetClass() == 'gmod_tool' 
+		   and pS.g_pActiveWeapon.current_mode == 'rope' and pCmd:KeyDown(IN_ATTACK) then
 			pCmd:SetViewAngles(Angle(math.Rand(-89, 89), math.Rand(-180, 180), 0))
 
-			-- Set the rope material to a random value in the list
+			-- Set the rope material to a random value in the list.
 			pS.g_pLocalPlayer:ConCommand(string.format('rope_material %s', table.Random(pS.pMisc.tblMats)))
 			
-			-- Spam IN_ATTACK
+			-- Spam IN_ATTACK.
 			if pCmd:CommandNumber() % 2 == 0 then 
 				pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_ATTACK)))
 			end
@@ -195,8 +196,8 @@ function pS.pMisc:CameraSpam(pCmd)
 	if pCache.Misc.CameraSpam and pS.g_pLocalPlayer:Alive() then
 		pS.g_pActiveWeapon = pS.g_pLocalPlayer:GetActiveWeapon();
 
-		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and 
-		   pS.g_pActiveWeapon:GetClass() == 'gmod_camera' and pCmd:KeyDown(IN_ATTACK) then
+		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() 
+		   and pS.g_pActiveWeapon:GetClass() == 'gmod_camera' and pCmd:KeyDown(IN_ATTACK) then
 			if pCmd:CommandNumber() % 2 == 0 then
 				pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_ATTACK))) -- Shoot!
 			end
@@ -204,9 +205,23 @@ function pS.pMisc:CameraSpam(pCmd)
 	end
 end
 
+function pS.pMisc:UseSpam(pCmd)
+	if pCache.Misc.UseSpam and pCmd:KeyDown(IN_USE) and pCmd:CommandNumber() % 2 == 0 then
+		pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_USE)))
+	end
+end
+
+function pS.pMisc:FlashlightSpam(pCmd)
+	if pCache.Misc.FlashlightSpam and input.IsKeyDown(KEY_F) then
+		pCmd:SetImpulse(100) -- Turn on flashlight
+	end
+end
+
 function pS.pMisc:OnCreateMove(pCmd)
 	-- Function Calls
 	pS.pMisc:Movement(pCmd)
+	pS.pMisc:UseSpam(pCmd)
 	pS.pMisc:RopeSpam(pCmd)
 	pS.pMisc:CameraSpam(pCmd)
+	pS.pMisc:FlashlightSpam(pCmd)
 end
