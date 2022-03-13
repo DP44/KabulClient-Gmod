@@ -144,9 +144,11 @@ pS.pMisc.tblMats = {
 }
 
 function pS.pMisc:BunnyHop(pCmd)
-	if pCmd:KeyDown(IN_JUMP) and not pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
+	if pCmd:KeyDown(IN_JUMP) and 
+	   not pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
 		pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_JUMP)))
-	elseif pCmd:KeyDown(IN_JUMP) and pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
+	elseif pCmd:KeyDown(IN_JUMP) and 
+		   pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
 		-- Once we hit the ground we give ourselves a little boost. 
 		-- This allows us to go extremely fast on some servers.
 		-- 
@@ -161,9 +163,11 @@ function pS.pMisc:Movement(pCmd)
 	-- Are we alive?
 	if pS.g_pLocalPlayer:Alive() then
 		-- Make sure we aren't in a vehicle or in spectator mode.
-		if not pS.g_pLocalPlayer:InVehicle() and pS.g_pLocalPlayer:GetObserverMode() == OBS_MODE_NONE then
+		if not pS.g_pLocalPlayer:InVehicle() and 
+		   pS.g_pLocalPlayer:GetObserverMode() == OBS_MODE_NONE then
 			-- Check if we aren't in noclip or going up a ladder.
-			if MOVETYPE ~= MOVETYPE_NOCLIP and MOVETYPE ~= MOVETYPE_LADDER then
+			if MOVETYPE ~= MOVETYPE_NOCLIP and 
+			   MOVETYPE ~= MOVETYPE_LADDER then
 				-- Should we run Bunnyhop code?
 				if pCache.Misc.BunnyHop then
 					pS.pMisc:BunnyHop(pCmd)
@@ -177,12 +181,16 @@ function pS.pMisc:RopeSpam(pCmd)
 	if pCache.Misc.RopeSpam and pS.g_pLocalPlayer:Alive() then
 		pS.g_pActiveWeapon = pS.g_pLocalPlayer:GetActiveWeapon();
 
-		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and pS.g_pActiveWeapon:GetClass() == 'gmod_tool' 
-		   and pS.g_pActiveWeapon.current_mode == 'rope' and pCmd:KeyDown(IN_ATTACK) then
+		if pS.g_pActiveWeapon and 
+		   pS.g_pActiveWeapon:IsValid() and 
+		   pS.g_pActiveWeapon:GetClass() == 'gmod_tool' and 
+		   pS.g_pActiveWeapon.current_mode == 'rope' and 
+		   pCmd:KeyDown(IN_ATTACK) then
 			pCmd:SetViewAngles(Angle(math.Rand(-89, 89), math.Rand(-180, 180), 0))
 
 			-- Set the rope material to a random value in the list.
-			pS.g_pLocalPlayer:ConCommand(string.format('rope_material %s', table.Random(pS.pMisc.tblMats)))
+			pS.g_pLocalPlayer:ConCommand(string.format(
+				'rope_material %s', table.Random(pS.pMisc.tblMats)))
 			
 			-- Spam IN_ATTACK.
 			if pCmd:CommandNumber() % 2 == 0 then 
@@ -196,17 +204,21 @@ function pS.pMisc:CameraSpam(pCmd)
 	if pCache.Misc.CameraSpam and pS.g_pLocalPlayer:Alive() then
 		pS.g_pActiveWeapon = pS.g_pLocalPlayer:GetActiveWeapon();
 
-		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() 
-		   and pS.g_pActiveWeapon:GetClass() == 'gmod_camera' and pCmd:KeyDown(IN_ATTACK) then
+		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and 
+		   pS.g_pActiveWeapon:GetClass() == 'gmod_camera' and 
+		   pCmd:KeyDown(IN_ATTACK) then
 			if pCmd:CommandNumber() % 2 == 0 then
-				pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_ATTACK))) -- Shoot!
+				-- Shoot!
+				pCmd:SetButtons(bit.band(pCmd:GetButtons(), 
+					bit.bnot(IN_ATTACK)))
 			end
 		end
 	end
 end
 
 function pS.pMisc:UseSpam(pCmd)
-	if pCache.Misc.UseSpam and pCmd:KeyDown(IN_USE) and pCmd:CommandNumber() % 2 == 0 then
+	if pCache.Misc.UseSpam and pCmd:KeyDown(IN_USE) and 
+	   pCmd:CommandNumber() % 2 == 0 then
 		pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_USE)))
 	end
 end

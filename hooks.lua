@@ -46,7 +46,8 @@ end)
 
 gameevent.Listen('player_spawn')
 
-hook.Add('player_spawn', 'pPlayerSpawn', function(pData) -- Called when the player spawns initially or respawns.
+-- Called when the player spawns initially or respawns.
+hook.Add('player_spawn', 'pPlayerSpawn', function(pData)
 	local numPlayerID = pData.userid
 
 	if Player(numPlayerID).m_bNoHitbox then
@@ -56,7 +57,8 @@ hook.Add('player_spawn', 'pPlayerSpawn', function(pData) -- Called when the play
 	end
 end)
 
-hook.Add('DrawPhysgunBeam', 'pDrawPhysgunBeam', function(pPlayer, pWeapon, bEnabled, pTarget, numBoneIndex, vecDeltaPos)
+hook.Add('DrawPhysgunBeam', 'pDrawPhysgunBeam', function(pPlayer, pWeapon, bEnabled, 
+														 pTarget, numBoneIndex, vecDeltaPos)
 	pS.pMisc.bFiringPhysgun = bEnabled
 	
 	-- Are we using the physgun?

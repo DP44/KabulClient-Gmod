@@ -158,7 +158,8 @@ function pS.pVisuals:GetPropEspColor(entProp)
 
 	-- This is temporary, and also incredibly sad.
 	--[[
-		if entProp:GetModel() == 'models/props/cs_militia/refrigerator01.mdl' and entProp:GetVelocity():LengthSqr() > 1000000 then
+		if entProp:GetModel() == 'models/props/cs_militia/refrigerator01.mdl' and 
+		   entProp:GetVelocity():LengthSqr() > 1000000 then
 			Col = Color(255, 0, 0, Col.a)
 		end
 	]]
@@ -175,10 +176,12 @@ function pS.pVisuals:GetPropEspColor(entProp)
 		return Col
 	end
 
-	-- Compare the distance of the owner to the prop to determine if it's a rebird prop that's being used for attacking.
+	-- Compare the distance of the owner to the prop to determine 
+	-- if it's a rebird prop that's being used for attacking.
 	-- TEMPORARY HARDCODED CHECK
 	if entProp:GetModel() == 'models/props/cs_militia/refrigerator01.mdl' and 
-	   (propOwner:GetPos():Distance(entProp:GetPos()) > 200 and entProp:GetVelocity():LengthSqr() > 50) then
+	   (propOwner:GetPos():Distance(entProp:GetPos()) > 200 and 
+		entProp:GetVelocity():LengthSqr() > 50) then
 		Col = Color(255, 0, 0, Col.a)
 	end
 
@@ -210,35 +213,50 @@ function pS.pVisuals:DrawPropInfo()
 		end
 
 		-- TODO: Optimizations.
-		local vecPropCenter = pS.pMisc.pLastProp:LocalToWorld(pS.pMisc.pLastProp:OBBCenter()):ToScreen()
-		local vecPropMins = pS.pMisc.pLastProp:LocalToWorld(pS.pMisc.pLastProp:OBBMins()):ToScreen()
+		local vecPropCenter = pS.pMisc.pLastProp:LocalToWorld(
+			pS.pMisc.pLastProp:OBBCenter()):ToScreen()
+		
+		local vecPropMins = pS.pMisc.pLastProp:LocalToWorld(
+			pS.pMisc.pLastProp:OBBMins()):ToScreen()
+		
 		local Col = pS.pVisuals:GetPropEspColor(pS.pMisc.pLastProp)
 
 		-- Fetch the closest player to the prop that isn't ourselves.
-		local plyClosestPlayer = pS.pVisuals:GetClosestPlayer(pS.pMisc.pLastProp, true)
+		local plyClosestPlayer = pS.pVisuals:GetClosestPlayer(
+			pS.pMisc.pLastProp, true)
 
 		-- Make sure the player is valid.
 		if not plyClosestPlayer then
 			return
 		end
 
-		local flDistToTarget = pS.g_pLocalPlayer:GetPos():Distance(plyClosestPlayer:GetPos())
-		local flDistToProp = pS.g_pLocalPlayer:GetPos():Distance(pS.pMisc.pLastProp:GetPos())
+		local flDistToTarget = pS.g_pLocalPlayer:GetPos():Distance(
+			plyClosestPlayer:GetPos())
+		
+		local flDistToProp = pS.g_pLocalPlayer:GetPos():Distance(
+			pS.pMisc.pLastProp:GetPos())
 
-		if pS.pVisuals.AttackProps[pS.pMisc.pLastProp:GetModel()] and not (pS.pMisc.pLastProp:GetVelocity():LengthSqr() < 50) then
-			draw.SimpleText(((flDistToTarget < flDistToProp) and ('FARTHER') or ('CLOSER')),
-							'pSilentFont', vecPropCenter.x, vecPropMins.y, 
-							Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		if pS.pVisuals.AttackProps[pS.pMisc.pLastProp:GetModel()] and 
+		   not (pS.pMisc.pLastProp:GetVelocity():LengthSqr() < 50) then
+			draw.SimpleText(((flDistToTarget < flDistToProp) and 
+				('FARTHER') or ('CLOSER')), 'pSilentFont', 
+				vecPropCenter.x, vecPropMins.y, 
+				Color(Col.r, Col.g, Col.b, 255), 
+				TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 		end
 
 		-- For testing purposes.
-		draw.SimpleText(string.format("plyClosestPlayer: %s", plyClosestPlayer:Nick()), 
-						'pSilentFont', vecPropCenter.x, vecPropMins.y + 10, 
-						Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.format("plyClosestPlayer: %s", 
+			plyClosestPlayer:Nick()), 'pSilentFont', 
+			vecPropCenter.x, vecPropMins.y + 10, 
+			Color(Col.r, Col.g, Col.b, 255), 
+			TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 		
-		draw.SimpleText(string.format("flDistToTarget: %s", math.Round(flDistToTarget)), 
-						'pSilentFont', vecPropCenter.x, vecPropMins.y + 20, 
-						Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.format("flDistToTarget: %s", 
+			math.Round(flDistToTarget)), 'pSilentFont', 
+			vecPropCenter.x, vecPropMins.y + 20, 
+			Color(Col.r, Col.g, Col.b, 255), 
+			TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 	end
 end
 
@@ -255,14 +273,20 @@ function pS.pVisuals:DrawEspPlayer(plyPlayer)
 	local Wpn = plyPlayer:GetActiveWeapon()
 
 	if pCache.Visuals.Health then
-		draw.SimpleText(plyPlayer:Health(), 'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText(plyPlayer:Health(), 'pSilentFont', 
+			math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, 
+			Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		
 		nTextDrop = nTextDrop + 12
 	end
 
 	if pCache.Visuals.Distance then
 		if plyPlayer ~= pS.g_pLocalPlayer then
-			draw.SimpleText('Distance: ' .. tostring(math.Round(pS.g_pLocalPlayer:GetPos():Distance(plyPlayer:GetPos()), 2)), 
-							'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			draw.SimpleText('Distance: ' .. tostring(math.Round(
+				pS.g_pLocalPlayer:GetPos():Distance(plyPlayer:GetPos()), 2)), 
+				'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, 
+				Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			
 			nTextDrop = nTextDrop + 12
 		end
 	end
@@ -270,7 +294,10 @@ function pS.pVisuals:DrawEspPlayer(plyPlayer)
 	if pCache.Visuals.HealthBar then
 		local flHpFrac = math.max(math.min(plyPlayer:Health() / 100, 1), 0)
 		local HsvCol = HSVToColor(90 * flHpFrac, 1, 1)
-		local HpCol = Color(HsvCol.r, HsvCol.g, HsvCol.b, HsvCol.a * Mult * plyPlayer.m_flVisualAlpha)
+		
+		local HpCol = Color(HsvCol.r, HsvCol.g, HsvCol.b, 
+			HsvCol.a * Mult * plyPlayer.m_flVisualAlpha)
+		
 		local BarH = math.ceil((Box.h + 4) * flHpFrac)
 		local nStep = math.ceil((Box.h) / 10)
 
@@ -283,32 +310,43 @@ function pS.pVisuals:DrawEspPlayer(plyPlayer)
 			surface.SetDrawColor(Black)
 
 			for Int = 0, 9 do
-				surface.DrawLine(Box.x - 8, (Box.y - 3) + Int * nStep, Box.x - 5, (Box.y - 3) + Int * nStep)
+				surface.DrawLine(Box.x - 8, (Box.y - 3) + Int * nStep, 
+								 Box.x - 5, (Box.y - 3) + Int * nStep)
 			end
 		end
 	end
 
 	if pCache.Visuals.Name then
-		draw.SimpleText(plyPlayer:Nick(), 'pSilentFont', Box.x - 2, Box.y - 3, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(plyPlayer:Nick(), 'pSilentFont', Box.x - 2, 
+			Box.y - 3, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 
 		if plyPlayer:GetNWBool("BuildMode", false) then
-			draw.SimpleText('BUILD MODE', 'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			draw.SimpleText('BUILD MODE', 'pSilentFont', 
+				math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, 
+				Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			nTextDrop = nTextDrop + 12
 		end
 	end
 
 	if pCache.Visuals.Tracers then
-		if vecHitboxPos and plyPlayer:Alive() and not plyPlayer:GetNWBool("BuildMode", false) then
-			if (vecHitboxPos:ToScreen().visible and pSDK.IsVisible(pS.g_pLocalPlayer:GetShootPos(), vecHitboxPos, { plyPlayer, pS.g_pLocalPlayer })) then
+		if vecHitboxPos and plyPlayer:Alive() and 
+		   (not plyPlayer:GetNWBool("BuildMode", false) or 
+		   	not plyPlayer:GetNWBool("LibbyProtectedSpawn", false)) then
+			if vecHitboxPos:ToScreen().visible and 
+			   pSDK.IsVisible(pS.g_pLocalPlayer:GetShootPos(), 
+			   		vecHitboxPos, { plyPlayer, pS.g_pLocalPlayer }) then
 				surface.SetDrawColor(Col)
-				surface.DrawLine(ScrW() / 2, ScrH() / 2, vecHitboxPos:ToScreen().x, vecHitboxPos:ToScreen().y)
+				surface.DrawLine(ScrW() / 2, ScrH() / 2, 
+					vecHitboxPos:ToScreen().x, vecHitboxPos:ToScreen().y)
 			end
 		end
 	end
 
 	if pCache.Visuals.TestValue then
 		if vecHitboxPos and plyPlayer:Alive() then
-			if (vecHitboxPos:ToScreen().visible and pSDK.IsVisible(pS.g_pLocalPlayer:GetShootPos(), vecHitboxPos, { plyPlayer, pS.g_pLocalPlayer })) then
+			if vecHitboxPos:ToScreen().visible and 
+			   pSDK.IsVisible(pS.g_pLocalPlayer:GetShootPos(), 
+			   		vecHitboxPos, { plyPlayer, pS.g_pLocalPlayer }) then
 				pSDK.DrawCrossAtPosition(vecHitboxPos:ToScreen().x, vecHitboxPos:ToScreen().y)
 			end
 		end
@@ -319,8 +357,11 @@ function pS.pVisuals:DrawCrosshair()
 	-- TODO: Toggle via concommand.
 	surface.SetDrawColor(pS.g_pDefaultColor)
 
-	surface.DrawLine((ScrW() / 2) - pCache.Visuals.CrosshairLength, ScrH() / 2, (ScrW() / 2) + pCache.Visuals.CrosshairLength, ScrH() / 2)
-	surface.DrawLine(ScrW() / 2, (ScrH() / 2) - pCache.Visuals.CrosshairLength, ScrW() / 2, (ScrH() / 2) + pCache.Visuals.CrosshairLength)
+	surface.DrawLine((ScrW() / 2) - pCache.Visuals.CrosshairLength, ScrH() / 2, 
+					 (ScrW() / 2) + pCache.Visuals.CrosshairLength, ScrH() / 2)
+	
+	surface.DrawLine(ScrW() / 2, (ScrH() / 2) - pCache.Visuals.CrosshairLength, 
+					 ScrW() / 2, (ScrH() / 2) + pCache.Visuals.CrosshairLength)
 end
 
 function pS.pVisuals:GetClosestPlayer(entProp, bFilterLocal)
@@ -404,7 +445,9 @@ function pS.pVisuals:RenderPropTracers()
 			mask = MASK_SHOT
 		})
 
-		local flDist = math.Clamp(plyClosestPlayer:GetShootPos():Distance(pS.g_pLocalPlayer:GetShootPos()), 100, 2500)
+		local flDist = math.Clamp(plyClosestPlayer:GetShootPos():Distance(
+			pS.g_pLocalPlayer:GetShootPos()), 100, 2500)
+		
 		local StretchX = flDist / 200
 		local StretchY = flDist / 400
 
@@ -420,7 +463,8 @@ function pS.pVisuals:RenderPropTracers()
 			cam.Start3D()
 			cam.IgnoreZ(true)
 			render.SetMaterial(pS.pVisuals.BeamMat)
-			render.DrawBeam(trHeadBeam.Start, trHeadBeam.End, trHeadBeam.Width, StretchX, StretchY, Color(Col.r, Col.g, Col.b, 255))
+			render.DrawBeam(trHeadBeam.Start, trHeadBeam.End, trHeadBeam.Width, 
+							StretchX, StretchY, Color(Col.r, Col.g, Col.b, 255))
 			cam.End3D()
 		end
 	end
@@ -440,7 +484,8 @@ function pS.pVisuals:DrawTrajectory()
 				local vecVelocity = tblPlayers[Int]:GetVelocity()
 				-- local vecVelocity = Vector(0, -1200, 350) -- For testing.
 
-				-- TODO: Move this whole operation into it's own function for organization because this is fucking messy as shit.
+				-- TODO: Move this whole operation into it's own function for 
+				--       organization because this is fucking messy as shit.
 
 				-- Placeholders for values we need to set in the loop.
 				local lastPoint = Vector()
@@ -453,7 +498,8 @@ function pS.pVisuals:DrawTrajectory()
 				points[1] = vecDest
 
 				-- Copy our destination vector to currentPoint.
-				-- I have no idea why I'm doing this because without it the entire points table generates the same value for every iteration.
+				-- I have no idea why I'm doing this because without it the entire 
+				-- points table generates the same value for every iteration.
 				vecDest:Add(vecVelocity * engine.TickInterval())
 				pSDK.VectorCopy(vecDest, currentPoint)
 
@@ -473,7 +519,8 @@ function pS.pVisuals:DrawTrajectory()
 				end
 
 				-- Check if we're on the ground.
-				if not tblPlayers[Int]:IsFlagSet(FL_ONGROUND) and tblPlayers[Int]:GetMoveType() ~= MOVETYPE_NOCLIP then
+				if not tblPlayers[Int]:IsFlagSet(FL_ONGROUND) and 
+				   tblPlayers[Int]:GetMoveType() ~= MOVETYPE_NOCLIP then
 					for Int = 1, #points do
 						-- We don't want to render our last point since there's nowhere for it to go.
 						if Int < #points then
@@ -505,7 +552,9 @@ function pS.pVisuals:RenderHeadBeams()
 					mask = MASK_SHOT
 				})
 
-				local flDist = math.Clamp(tblPlayers[Int]:GetShootPos():Distance(pS.g_pLocalPlayer:GetShootPos()), 100, 2500)
+				local flDist = math.Clamp(tblPlayers[Int]:GetShootPos():Distance(
+					pS.g_pLocalPlayer:GetShootPos()), 100, 2500)
+				
 				local flSpriteDist = tblPlayers[Int]:EyePos():Distance(trUp.HitPos)
 				local StretchX = flDist / 200
 				local StretchY = flDist / 400
@@ -525,7 +574,8 @@ function pS.pVisuals:RenderHeadBeams()
 				cam.Start3D()
 				cam.IgnoreZ(true)
 				render.SetMaterial(pS.pVisuals.BeamMat)
-				render.DrawBeam(trHeadBeam.Start, trHeadBeam.End, trHeadBeam.Width, StretchX, StretchY, Col)
+				render.DrawBeam(trHeadBeam.Start, trHeadBeam.End, 
+					trHeadBeam.Width, StretchX, StretchY, Col)
 				cam.End3D()
 			end
 		end
@@ -552,7 +602,8 @@ function pS.pVisuals:RenderPlayerEsp()
 		render.SuppressEngineLighting(pCache.Visuals.FlatChams)
 
 		for Int = 1, #tblPlayers do
-			if pS.pVisuals:PlayerShouldDraw(tblPlayers[Int]) and tblPlayers[Int].m_flVisualAlpha then
+			if pS.pVisuals:PlayerShouldDraw(tblPlayers[Int]) and 
+			   tblPlayers[Int].m_flVisualAlpha then
 				local Col = pS.pVisuals:GetPlayerEspColor(tblPlayers[Int])
 
 				render.SetColorModulation(Col.r / 255, Col.g / 255, Col.b / 255)
@@ -586,7 +637,8 @@ function pS.pVisuals:RenderPropEsp()
 				render.SetBlend(90 / 255)
 
 				-- Draw a wireframe box.
-				render.DrawWireframeBox(tblProps[Int]:GetPos(), tblProps[Int]:GetAngles(), tblProps[Int]:OBBMins(), tblProps[Int]:OBBMaxs(), Col, false)
+				render.DrawWireframeBox(tblProps[Int]:GetPos(), tblProps[Int]:GetAngles(), 
+					tblProps[Int]:OBBMins(), tblProps[Int]:OBBMaxs(), Col, false)
 
 				tblProps[Int]:DrawModel()
 
