@@ -147,7 +147,9 @@ function pS.pMisc:BunnyHop(pCmd)
 	if pCmd:KeyDown(IN_JUMP) and not pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
 		pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_JUMP)))
 	elseif pCmd:KeyDown(IN_JUMP) and pS.g_pLocalPlayer:IsFlagSet(FL_ONGROUND) then
-		pCmd:SetForwardMove(10000) -- once we hit the ground we give ourselves a little boost. This allows us to go extremely fast on some servers.
+		-- Once we hit the ground we give ourselves a little boost. 
+		-- This allows us to go extremely fast on some servers.
+		pCmd:SetForwardMove(10000)
 	end
 end
 
@@ -173,7 +175,9 @@ function pS.pMisc:RopeSpam(pCmd)
 	if pCache.Misc.RopeSpam and pS.g_pLocalPlayer:Alive() then
 		pS.g_pActiveWeapon = pS.g_pLocalPlayer:GetActiveWeapon();
 
-		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and pS.g_pActiveWeapon:GetClass() == 'gmod_tool' and pS.g_pActiveWeapon.current_mode == 'rope' and pCmd:KeyDown(IN_ATTACK) then
+		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and 
+		   pS.g_pActiveWeapon:GetClass() == 'gmod_tool' and 
+		   pS.g_pActiveWeapon.current_mode == 'rope' and pCmd:KeyDown(IN_ATTACK) then
 			pCmd:SetViewAngles(Angle(math.Rand(-89, 89), math.Rand(-180, 180), 0))
 
 			-- Set the rope material to a random value in the list
@@ -191,7 +195,8 @@ function pS.pMisc:CameraSpam(pCmd)
 	if pCache.Misc.CameraSpam and pS.g_pLocalPlayer:Alive() then
 		pS.g_pActiveWeapon = pS.g_pLocalPlayer:GetActiveWeapon();
 
-		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and pS.g_pActiveWeapon:GetClass() == 'gmod_camera' and pCmd:KeyDown(IN_ATTACK) then
+		if pS.g_pActiveWeapon and pS.g_pActiveWeapon:IsValid() and 
+		   pS.g_pActiveWeapon:GetClass() == 'gmod_camera' and pCmd:KeyDown(IN_ATTACK) then
 			if pCmd:CommandNumber() % 2 == 0 then
 				pCmd:SetButtons(bit.band(pCmd:GetButtons(), bit.bnot(IN_ATTACK))) -- Shoot!
 			end
