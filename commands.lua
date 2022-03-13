@@ -29,8 +29,10 @@ concommand.Add('kc_help', function()
 	MsgC(color_white,        '                         head extending all the way up.\n'     );
 	MsgC(pS.g_pDefaultColor, '------------------------------------------------------------\n');
 	MsgC(color_white,        'kc_misc_bunnyhop       - Toggles bunnyhopping.\n'              );
+	MsgC(color_white,        'kc_misc_usespam        - Toggles use spam.\n'                  );
 	MsgC(color_white,        'kc_misc_ropespam       - Toggles rope spam.\n'                 );
 	MsgC(color_white,        'kc_misc_cameraspam     - Toggles camera spam.\n'               );
+	MsgC(color_white,        'kc_misc_flashlightspam - Toggles flashlight spam.\n'           );
 	MsgC(color_white,        'kc_misc_hitmarker      - Toggles hitsounds.\n'                 );
 	MsgC(pS.g_pDefaultColor, '============================================================\n');
 end)
@@ -49,8 +51,10 @@ concommand.Add('kc_config', function()
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Visuals.Trajectory = ', pCache.Visuals.Trajectory, '\n')
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Visuals.HeadBeams = ', pCache.Visuals.HeadBeams, '\n')
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.BunnyHop = ', pCache.Visuals.BunnyHop, '\n')
+	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.UseSpam = ', pCache.Visuals.CameraSpam, '\n')
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.RopeSpam = ', pCache.Visuals.RopeSpam, '\n')
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.CameraSpam = ', pCache.Visuals.CameraSpam, '\n')
+	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.FlashlightSpam = ', pCache.Visuals.RopeSpam, '\n')
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.Hitmarker = ', pCache.Visuals.Hitmarker, '\n')
 end)
 
@@ -62,7 +66,7 @@ concommand.Add('kc_debug_dump_netvars', function()
 	PrintTable(BuildNetworkedVarsTable())
 end)
 
-concommand.Add('kh_debug_dump_concommands', function()
+concommand.Add('kc_debug_dump_concommands', function()
 	local a, b = concommand.GetTable()
 	PrintTable(a)
 end)
@@ -132,6 +136,11 @@ concommand.Add('kc_misc_bunnyhop', function()
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.BunnyHop = ', pCache.Misc.BunnyHop, '\n')
 end)
 
+concommand.Add('kc_misc_usespam', function()
+	pCache.Misc.UseSpam = not pCache.Misc.UseSpam
+	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.UseSpam = ', pCache.Misc.UseSpam, '\n')
+end)
+
 concommand.Add('kc_misc_ropespam', function()
 	pCache.Misc.RopeSpam = not pCache.Misc.RopeSpam
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.RopeSpam = ', pCache.Misc.RopeSpam, '\n')
@@ -140,6 +149,11 @@ end)
 concommand.Add('kc_misc_cameraspam', function()
 	pCache.Misc.CameraSpam = not pCache.Misc.CameraSpam
 	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.CameraSpam = ', pCache.Misc.CameraSpam, '\n')
+end)
+
+concommand.Add('kc_misc_flashlightspam', function()
+	pCache.Misc.FlashlightSpam = not pCache.Misc.FlashlightSpam
+	MsgC(pS.g_pDefaultColor, '[KabulClient]', color_white, ' pCache.Misc.FlashlightSpam = ', pCache.Misc.FlashlightSpam, '\n')
 end)
 
 concommand.Add('kc_misc_hitmarker', function()
