@@ -8,8 +8,7 @@ pS.pVisuals.BeamMat = Material("sprites/tp_beam001")
 
 -- A table of attack props.
 pS.pVisuals.AttackProps = {
-	['models/props/de_tides/gate_large.mdl'] = true,
-	['models/props/CS_militia/refrigerator01.mdl'] = true
+	['models/props/de_tides/gate_large.mdl'] = true
 }
 
 -- A table of defense props
@@ -21,10 +20,26 @@ pS.pVisuals.DefenseProps = {
 pS.pVisuals.RT = GetRenderTarget('pRenderTarget' .. os.time(), ScrW(), ScrH())
 
 -- Chams materials.
-pS.pVisuals.ChamsMat = CreateMaterial('pChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$model'] = 1 })
-pS.pVisuals.FakeChamsMat = CreateMaterial('pFakeChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$model'] = 1 })
-pS.pVisuals.PropChamsMat = CreateMaterial('pPropChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$nocull'] = 1, ['$model'] = 1 })
-pS.pVisuals.FakeAngleChamsMat = CreateMaterial('pFakeChams' .. os.time(), 'VertexLitGeneric', { ['$basetexture'] = 'models/debug/debugwhite', ['$model'] = 1 })
+pS.pVisuals.ChamsMat = CreateMaterial('pChams' .. os.time(), 'VertexLitGeneric', { 
+	['$basetexture'] = 'models/debug/debugwhite',
+	['$model'] = 1
+})
+
+pS.pVisuals.FakeChamsMat = CreateMaterial('pFakeChams' .. os.time(), 'VertexLitGeneric', { 
+	['$basetexture'] = 'models/debug/debugwhite',
+	['$model'] = 1
+})
+
+pS.pVisuals.PropChamsMat = CreateMaterial('pPropChams' .. os.time(), 'VertexLitGeneric', { 
+	['$basetexture'] = 'models/debug/debugwhite',
+	['$nocull'] = 1,
+	['$model'] = 1
+})
+
+pS.pVisuals.FakeAngleChamsMat = CreateMaterial('pFakeChams' .. os.time(), 'VertexLitGeneric', { 
+	['$basetexture'] = 'models/debug/debugwhite',
+	['$model'] = 1
+})
 
 function pS.pVisuals:GetEspBoxBounds(entEntity)
 	local tblBox = { x = math.huge, y = math.huge, w = math.huge * -1, h = math.huge * -1 }
@@ -93,13 +108,15 @@ function pS.pVisuals:PrePlayerEspDraw(plyPlayer)
 	else
 		if not plyPlayer.m_flVisualAlpha ~= 0 then
 			-- A simple fade effect for players who shouldn't draw.
-			plyPlayer.m_flVisualAlpha = math.max(plyPlayer.m_flVisualAlpha - (1 / .2) * RealFrameTime(), 0)
+			plyPlayer.m_flVisualAlpha = math.max(
+				plyPlayer.m_flVisualAlpha - (1 / 0.2) * RealFrameTime(), 0)
 		end
 	end
 end
 
 function pS.pVisuals:GetPlayerEspColor(plyPlayer)
-	local Ret = Color(pS.g_pDefaultColor.r, pS.g_pDefaultColor.g, pS.g_pDefaultColor.b, 255)
+	local Ret = Color(pS.g_pDefaultColor.r, 
+		pS.g_pDefaultColor.g, pS.g_pDefaultColor.b, 255)
 
 	if not plyPlayer then
 		return Ret
@@ -109,7 +126,8 @@ function pS.pVisuals:GetPlayerEspColor(plyPlayer)
 		return Ret
 	end
 
-	Ret = Color(pS.g_pDefaultColor.r, pS.g_pDefaultColor.g, pS.g_pDefaultColor.b, 255 * plyPlayer.m_flVisualAlpha)
+	Ret = Color(pS.g_pDefaultColor.r, pS.g_pDefaultColor.g, 
+		pS.g_pDefaultColor.b, 255 * plyPlayer.m_flVisualAlpha)
 
 	local Col = team.GetColor(plyPlayer:Team())
 	Ret = Color(Col.r, Col.g, Col.b, Ret.a * plyPlayer.m_flVisualAlpha)
@@ -118,7 +136,8 @@ function pS.pVisuals:GetPlayerEspColor(plyPlayer)
 end
 
 function pS.pVisuals:GetPropEspColor(entProp)
-	local Col = Color(pS.g_pDefaultColor.r, pS.g_pDefaultColor.g, pS.g_pDefaultColor.b, 255);
+	local Col = Color(pS.g_pDefaultColor.r, 
+		pS.g_pDefaultColor.g, pS.g_pDefaultColor.b, 255);
 
 	-- Check if entProp is valid.
 	if not entProp then
@@ -131,8 +150,36 @@ function pS.pVisuals:GetPropEspColor(entProp)
 	end
 
 	-- Check if it's either a defense prop or an attack prop being used for defense.
-	if (pS.pVisuals.DefenseProps[entProp:GetModel()]) or (pS.pVisuals.AttackProps[entProp:GetModel()] and (entProp:GetVelocity():LengthSqr() < 50)) then
+	if pS.pVisuals.DefenseProps[entProp:GetModel()] or 
+	   (pS.pVisuals.AttackProps[entProp:GetModel()] and 
+	   	entProp:GetVelocity():LengthSqr() < 50) then
 		Col = Color(0, 0, 255, Col.a)
+	end
+
+	-- This is temporary, and also incredibly sad.
+	--[[
+		if entProp:GetModel() == 'models/props/cs_militia/refrigerator01.mdl' and entProp:GetVelocity():LengthSqr() > 1000000 then
+			Col = Color(255, 0, 0, Col.a)
+		end
+	]]
+
+	--
+	-- THIS ONLY WORKS ON SERVERS WITH FALCO'S PROP PROTECTION!
+	--
+
+	-- Fetch the owner of the prop.
+	local propOwner = entProp:GetTable()["FPPOwner"]
+
+	-- Make sure the prop owner is valid.
+	if not propOwner then
+		return Col
+	end
+
+	-- Compare the distance of the owner to the prop to determine if it's a rebird prop that's being used for attacking.
+	-- TEMPORARY HARDCODED CHECK
+	if entProp:GetModel() == 'models/props/cs_militia/refrigerator01.mdl' and 
+	   (propOwner:GetPos():Distance(entProp:GetPos()) > 200 and entProp:GetVelocity():LengthSqr() > 50) then
+		Col = Color(255, 0, 0, Col.a)
 	end
 
 	-- Return the determined color.
@@ -146,7 +193,7 @@ function pS.pVisuals:DrawEspBox(x, y, w, h, col)
 end
 
 function pS.pVisuals:DrawPropInfo()
-	if pCache.Visuals.Enabled and pCache.Visuals.PropInfo then
+	if pCache.Visuals.PropInfo then
 		-- Check if pLastProp is valid.
 		if pS.pMisc.pLastProp == nil or pS.pMisc.pLastProp == NULL then
 			return
@@ -167,8 +214,10 @@ function pS.pVisuals:DrawPropInfo()
 		local vecPropMins = pS.pMisc.pLastProp:LocalToWorld(pS.pMisc.pLastProp:OBBMins()):ToScreen()
 		local Col = pS.pVisuals:GetPropEspColor(pS.pMisc.pLastProp)
 
+		-- Fetch the closest player to the prop that isn't ourselves.
 		local plyClosestPlayer = pS.pVisuals:GetClosestPlayer(pS.pMisc.pLastProp, true)
 
+		-- Make sure the player is valid.
 		if not plyClosestPlayer then
 			return
 		end
@@ -177,8 +226,19 @@ function pS.pVisuals:DrawPropInfo()
 		local flDistToProp = pS.g_pLocalPlayer:GetPos():Distance(pS.pMisc.pLastProp:GetPos())
 
 		if pS.pVisuals.AttackProps[pS.pMisc.pLastProp:GetModel()] and not (pS.pMisc.pLastProp:GetVelocity():LengthSqr() < 50) then
-			draw.SimpleText(((flDistToTarget < flDistToProp) and ('FARTHER') or ('CLOSER')), 'pSilentFont', vecPropCenter.x, vecPropMins.y, Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText(((flDistToTarget < flDistToProp) and ('FARTHER') or ('CLOSER')),
+							'pSilentFont', vecPropCenter.x, vecPropMins.y, 
+							Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 		end
+
+		-- For testing purposes.
+		draw.SimpleText(string.format("plyClosestPlayer: %s", plyClosestPlayer:Nick()), 
+						'pSilentFont', vecPropCenter.x, vecPropMins.y + 10, 
+						Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		
+		draw.SimpleText(string.format("flDistToTarget: %s", math.Round(flDistToTarget)), 
+						'pSilentFont', vecPropCenter.x, vecPropMins.y + 20, 
+						Color(Col.r, Col.g, Col.b, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 	end
 end
 
@@ -201,7 +261,8 @@ function pS.pVisuals:DrawEspPlayer(plyPlayer)
 
 	if pCache.Visuals.Distance then
 		if plyPlayer ~= pS.g_pLocalPlayer then
-			draw.SimpleText('Distance: ' .. tostring(math.Round(pS.g_pLocalPlayer:GetPos():Distance(plyPlayer:GetPos()), 2)), 'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			draw.SimpleText('Distance: ' .. tostring(math.Round(pS.g_pLocalPlayer:GetPos():Distance(plyPlayer:GetPos()), 2)), 
+							'pSilentFont', math.ceil(Box.x + Box.w + 4), Box.y + nTextDrop - 5, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			nTextDrop = nTextDrop + 12
 		end
 	end
@@ -284,6 +345,10 @@ function pS.pVisuals:GetClosestPlayer(entProp, bFilterLocal)
 	for Int = 1, #tblPlayers do
 		-- Ignore localplayer if specified.
 		if bFilterLocal and tblPlayers[Int] == pS.g_pLocalPlayer then
+			continue
+		end
+
+		if tblPlayers[Int] and tblPlayers[Int]:GetNWBool("BuildMode", false) then
 			continue
 		end
 
@@ -402,7 +467,8 @@ function pS.pVisuals:DrawTrajectory()
 					-- Save our current point to our table.
 					points[j] = currentPoint
 
-					-- Store our last point. If the next index in the points table is defined then we store that instead, if not then we just store the current index.
+					-- Store our last point. If the next index in the points table is defined 
+					-- then we store that instead, if not then we just store the current index.
 					lastPoint = points[j + 1] and points[j + 1] or points[j]
 				end
 
