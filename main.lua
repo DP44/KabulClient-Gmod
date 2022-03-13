@@ -40,9 +40,9 @@ local tblFiles = {
 
 -- Include all of our files in order.
 for _, File in pairs(tblFiles) do
-	include('KuteHook-Gmod-main/' .. File)
+	include('KabulClient-Gmod-main/' .. File)
 	MsgC(pS.g_pDefaultColor, string.format('File "%s" loaded.\n', File))
 end
 
 -- initialize the cheat.
-include('KuteHook-Gmod-main/init.lua')
+include('KabulClient-Gmod-main/init.lua')
